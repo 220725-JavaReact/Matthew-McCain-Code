@@ -1,12 +1,13 @@
+package view;
+
 import java.util.Scanner;
 
-import controller.StoreDAO;
+import dl.StoreDAO;
+import dl.storage.DAO;
+import dl.storage.StoreData;
+import exceptions.ProductNotFoundException;
 import model.*;
 
-/**
- * @author Matthew MCain
- * A CLI Storefront Application
- */
 public class Driver {
     /**
      * Does not handle any arguments
@@ -16,7 +17,7 @@ public class Driver {
 
         String userInput = "";
         Scanner in = new Scanner(System.in);
-        StoreDAO dao = new StoreDAO();
+        DAO dao = new StoreDAO();
 
         System.out.println("  ________                                  .__   \n"
                 + " /  _____/  ____   ____   ________________  |  |  \n"
@@ -53,18 +54,26 @@ public class Driver {
                     }
                     break;
                 case "3":
-                    // View store inventory
-
+                    // add a product to inventory
+                    dao.addProduct(captureProduct(in));
                     break;
                 case "4":
-                    // Place an order
-
+                    // View store inventory
+                    for(Product product : StoreData.products) {
+                        System.out.println(product);
+                    }
                     break;
                 case "5":
-                    // View order history
-
+                    // Place an order
+                    StoreData.orders.add(createOrder(in, dao));
                     break;
                 case "6":
+                    // View order history
+                    for(Order order : StoreData.orders) {
+                        System.out.println(order.getTotal());
+                    }
+                    break;
+                case "7":
                     // Replenish inventory
 
                     break;
@@ -81,18 +90,51 @@ public class Driver {
         in.close();
     }
 
-    /**
-     * Displays the available menu options to the user.
-     */
+
     static void displayOptions() {
-        System.out.println("[h] See this menu again\n"
-                + "[1] Add a customer\n"
-                + "[2] Search for a customer\n"
-                + "[3] View store inventory\n"
-                + "[4] Place an order\n"
-                + "[5] View order history\n"
-                + "[6] Replenish inventory\n"
-                + "[x] Exit");
+        System.out.println("[h] See this menu again\n" +
+                "[1] Add a customer\n" +
+                "[2] Search for a customer\n" +
+                "[3] Add a product\n" +
+                "[4] View store inventory\n" +
+                "[5] Place an order\n" +
+                "[6] View order history\n" +
+                "[7] Replenish inventory\n" +
+                "[x] Exit");
+    }
+
+    static Product captureProduct(Scanner in) {
+        System.out.println("Product Name:");
+        String name = in.nextLine();
+        System.out.println("Product Price");
+        double price = in.nextDouble();
+        in.nextLine();
+        System.out.println("Product Description:");
+        String description = in.nextLine();
+        return new Product(name, price, description);
+    }
+
+    static Order createOrder(Scanner in, DAO dao) {
+        Order order = new Order();
+        String input = "y";
+        do {
+            addLineItem(in, order, dao);
+            System.out.println("Add another item [y/n]:");
+            input = in.nextLine();
+        } while (!input.equals("n"));
+        return order;
+    }
+    static void addLineItem(Scanner in, Order order, DAO dao) {
+        try {
+            System.out.println("Name of Product to add to order:");
+            Product product = dao.findProduct(in.nextLine());
+            System.out.println("Quantity of " + product.getName() + " to add to order:");
+            int quantity = in.nextInt();
+            in.nextLine();
+            order.addProduct(new LineItem(product, quantity));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     static Customer captureCustomer(Scanner in) {
@@ -105,7 +147,7 @@ public class Driver {
     }
 
     static Address captureAddress(Scanner in) {
-        System.out.println("Street Number: ");
+        System.out.println("House Number: ");
         int streetNumber = in.nextInt();
         in.nextLine();
         System.out.println("Street Name: ");

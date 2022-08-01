@@ -1,37 +1,25 @@
-/**
- * 
- */
 package model;
 
 import java.util.*;
 
-/**
- * @author Matthew McCain
- *
- */
 public class Order {
 	
 	private ArrayList<LineItem> items;
 
-	/**
-	 * @param items
-	 */
-	public Order(ArrayList<LineItem> items) {
-		this.items = items;
+	public void addProduct(LineItem item) {
+		items.add(item);
 	}
 
-	/**
-	 * @return
-	 */
 	public ArrayList<LineItem> getItems() {
 		return items;
 	}
 
-	/**
-	 * @param items
-	 */
-	public void setItems(ArrayList<LineItem> items) {
-		this.items = items;
+	public double getTotal() {
+		double total = 0;
+		for (LineItem item : items) {
+			total += item.total();
+		}
+		return total;
 	}
 
 }
