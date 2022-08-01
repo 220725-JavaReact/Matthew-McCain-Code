@@ -12,7 +12,8 @@ public class Address {
 	private int streetNumber;
 	private String streetName;
 	private String city;
-	private STATE state;
+//	private STATE state;
+	private String state;
 	private int zip;
 	
 	/**
@@ -22,7 +23,7 @@ public class Address {
 	 * @param state
 	 * @param zip
 	 */
-	public Address(int streetNumber, String streetName, String city, STATE state, int zip) {
+	public Address(int streetNumber, String streetName, String city, String state, int zip) {
 		this.streetNumber = streetNumber;
 		this.streetName = streetName;
 		this.city = city;
@@ -59,11 +60,11 @@ public class Address {
 		this.city = city;
 	}
 
-	public STATE getState() {
+	public String getState() {
 		return state;
 	}
 
-	public void setState(STATE state) {
+	public void setState(String state) {
 		this.state = state;
 	}
 
