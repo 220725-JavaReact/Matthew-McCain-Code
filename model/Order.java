@@ -6,7 +6,12 @@ public class Order {
 	
 	private ArrayList<LineItem> items;
 
+	public Order() {
+		items = new ArrayList<>();
+	}
+
 	public void addProduct(LineItem item) {
+		System.out.println("Adding " + item + " to order.");
 		items.add(item);
 	}
 
@@ -22,4 +27,10 @@ public class Order {
 		return total;
 	}
 
+	@Override
+	public String toString() {
+		return "Order{" +
+				"items=" + items +
+				'}';
+	}
 }

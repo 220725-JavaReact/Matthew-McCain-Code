@@ -1,12 +1,9 @@
 package dl;
 
-import dl.storage.DAO;
 import dl.storage.StoreData;
 import exceptions.CustomerNotFoundException;
 import exceptions.ProductNotFoundException;
 import model.*;
-
-import java.util.ArrayList;
 
 public class StoreDAO implements DAO {
 

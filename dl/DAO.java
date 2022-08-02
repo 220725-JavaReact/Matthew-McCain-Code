@@ -1,4 +1,4 @@
-package dl.storage;
+package dl;
 
 import model.Customer;
 import model.Product;

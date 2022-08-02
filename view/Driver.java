@@ -3,9 +3,8 @@ package view;
 import java.util.Scanner;
 
 import dl.StoreDAO;
-import dl.storage.DAO;
+import dl.DAO;
 import dl.storage.StoreData;
-import exceptions.ProductNotFoundException;
 import model.*;
 
 public class Driver {
@@ -70,7 +69,7 @@ public class Driver {
                 case "6":
                     // View order history
                     for(Order order : StoreData.orders) {
-                        System.out.println(order.getTotal());
+                        System.out.println(order);
                     }
                     break;
                 case "7":
@@ -131,9 +130,10 @@ public class Driver {
             System.out.println("Quantity of " + product.getName() + " to add to order:");
             int quantity = in.nextInt();
             in.nextLine();
-            order.addProduct(new LineItem(product, quantity));
+            LineItem item = new LineItem(product, quantity);
+            order.addProduct(item);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
