@@ -2,10 +2,12 @@ package dl;
 
 import model.Customer;
 import model.Product;
+import model.StoreFront;
 
 public interface DAO {
-    public void addCustomer(Customer customer);
-    public Customer findCustomer(String name) throws Exception;
-    public void addProduct(Product product);
-    public Product findProduct(String name) throws Exception;
+    void addCustomer(Customer customer);
+    Customer findCustomer(String name) throws Exception;
+    void addProduct(Product product);
+    Product findProduct(String name) throws Exception;
+    void addStoreFront(StoreFront store);
 }

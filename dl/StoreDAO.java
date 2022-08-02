@@ -1,8 +1,8 @@
 package dl;
 
 import dl.storage.StoreData;
-import exceptions.CustomerNotFoundException;
-import exceptions.ProductNotFoundException;
+import bl.exceptions.CustomerNotFoundException;
+import bl.exceptions.ProductNotFoundException;
 import model.*;
 
 public class StoreDAO implements DAO {
@@ -33,4 +33,7 @@ public class StoreDAO implements DAO {
         throw new ProductNotFoundException("Product not found!");
     }
 
+    public void addStoreFront(StoreFront store) {
+        StoreData.storeFronts.add(store);
+    }
 }
