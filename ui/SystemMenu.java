@@ -1,6 +1,7 @@
 package ui;
 
-import bl.Client;
+import dao.storage.StoreData;
+import services.Client;
 import model.StoreFront;
 
 import java.util.Scanner;
@@ -18,15 +19,19 @@ public class SystemMenu {
 
     public void run() {
         String userInput = "";
-
-        displayOptions();
         do {
             switch (userInput) {
                 case "1":
-                    client.addStore(in);
+                    if (StoreData.storeFronts.size() == 0) {
+                        System.out.println("No Store Fronts available, please add a store.");
+                        break;
+                    }
+                    this.store = client.getStore(in);
+                    StoreMenu storeMenu = new StoreMenu(store, client, in);
+                    storeMenu.run();
                     break;
                 case "2":
-                    this.store = client.getStore(in);
+                    client.addStore(in);
                     break;
                 case "h":
                     System.out.println("Always happy to help!");
@@ -35,6 +40,9 @@ public class SystemMenu {
                 default:
                     displayOptions();
             }
+            if (store != null) {
+                System.out.println("Currently in : " + store.getName());
+            }
             System.out.println("Enter Command:");
             userInput = in.nextLine();
         } while(!(userInput.equals("x")));
@@ -42,8 +50,10 @@ public class SystemMenu {
 
     private void displayOptions() {
         System.out.println("Available Options:\n" +
-                "[1] Add a Store Front\n" +
-                "[2] Choose a Store Front");
+                "[h[ Display Options\n" +
+                "[1] Choose a Store Front\n" +
+                "[2] Add a Store Front\n" +
+                "[x] Exit");
     }
 
     public StoreFront getStore() {

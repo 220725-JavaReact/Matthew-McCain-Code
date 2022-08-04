@@ -1,7 +1,8 @@
-package bl.util;
+package services.util;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Logger {
@@ -15,7 +16,7 @@ public class Logger {
     }
     private void writeToFile(String log)
     {
-        String filePath = "GeneralStore.log";
+        String filePath = "./logs/" + LocalDate.now() + ".log";
         try (FileWriter writer = new FileWriter(filePath, true)){
             writer.append(log + "\n");
         } catch (IOException e) {

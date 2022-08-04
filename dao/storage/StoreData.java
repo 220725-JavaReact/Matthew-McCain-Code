@@ -1,4 +1,4 @@
-package dl.storage;
+package dao.storage;
 
 import model.Customer;
 import model.Order;

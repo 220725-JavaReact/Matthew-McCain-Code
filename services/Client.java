@@ -1,23 +1,28 @@
-package bl;
+package services;
 
-import dl.DAO;
-import dl.StoreDAO;
-import dl.storage.StoreData;
+import dao.DAO;
+import dao.StoreDAO;
+import dao.storage.StoreData;
 import model.*;
+import services.util.Logger;
 
 import java.util.Scanner;
+
+import static services.util.Logger.LogLevel.*;
 
 public class Client {
 
 DAO dao = new StoreDAO();
 
-public void addStore(Scanner in) {
-    System.out.println("Store Name:");
-    String name = in.nextLine();
-    Address address = captureAddress(in);
-    String phone = capturePhone(in);
-    dao.addStoreFront(new StoreFront(name, address, phone));
-}
+    public void addStore(Scanner in) {
+        System.out.println("Store Name:");
+        String name = in.nextLine();
+        Address address = captureAddress(in);
+        String phone = capturePhone(in);
+        StoreFront store = new StoreFront(name, address, phone);
+        dao.addStoreFront(store);
+        Logger.getLogger().log(info, "Store '" + store.getName() + "' was added");
+    }
 
     public StoreFront getStore(Scanner in) {
         StoreFront store = new StoreFront();
@@ -29,8 +34,9 @@ public void addStore(Scanner in) {
             System.out.println("Which Store Front would you like to choose?");
             response = in.nextInt();
             in.nextLine();
-            if (response > 0 && response < StoreData.storeFronts.size()) {
-                store = StoreData.storeFronts.get(response);
+            if (response > 0 && response <= StoreData.storeFronts.size()) {
+                store = StoreData.storeFronts.get(response - 1);
+                Logger.getLogger().log(info, store.getName() + " was found.");
             } else {
                 response = -1;
             }
@@ -45,7 +51,9 @@ public void addStore(Scanner in) {
         in.nextLine();
         System.out.println("Product Description:");
         String description = in.nextLine();
-        return new Product(name, price, description);
+        Product product = new Product(name, price, description);
+        Logger.getLogger().log(info, "Product: " + product.getName() + " was added.");
+        return product;
     }
 
     public Order createOrder (Scanner in, DAO dao){
@@ -55,7 +63,8 @@ public void addStore(Scanner in) {
             addLineItem(in, order, dao);
             System.out.println("Add another item [y/n]:");
             input = in.nextLine();
-        } while (!input.equals("n"));
+        } while (input.toLowerCase().equals("y"));
+        Logger.getLogger().log(info, "Placed Order:\n" + order);
         return order;
     }
     public void addLineItem (Scanner in, Order order, DAO dao){
@@ -68,7 +77,7 @@ public void addStore(Scanner in) {
             LineItem item = new LineItem(product, quantity);
             order.addProduct(item);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger().log(error, e);
         }
     }
     public Customer captureCustomer (Scanner in){
@@ -77,7 +86,9 @@ public void addStore(Scanner in) {
         Address address = captureAddress(in);
         String email = captureEmail(in);
         String phone = capturePhone(in);
-        return new Customer(name, address, email, phone);
+        Customer customer = new Customer(name, address, email, phone);
+        Logger.getLogger().log(info, customer.getName() + " was added.");
+        return customer;
     }
 
     public Address captureAddress (Scanner in){

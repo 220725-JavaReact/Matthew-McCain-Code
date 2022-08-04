@@ -1,12 +1,15 @@
 package ui;
 
-import bl.Client;
-import dl.DAO;
-import dl.StoreDAO;
-import dl.storage.StoreData;
+import services.Client;
+import dao.DAO;
+import dao.StoreDAO;
+import dao.storage.StoreData;
 import model.*;
+import services.util.Logger;
 
 import java.util.Scanner;
+
+import static services.util.Logger.LogLevel.*;
 
 public class StoreMenu {
 
@@ -41,7 +44,8 @@ public class StoreMenu {
                     String searchString = in.nextLine();
                     try {
                         Customer customer = dao.findCustomer(searchString);
-                        System.out.println(customer.getName());
+                        Logger.getLogger().log(info, "Customer: " + customer.getName() + " was found");
+                        System.out.println("Found customer: " + customer.getName());
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }

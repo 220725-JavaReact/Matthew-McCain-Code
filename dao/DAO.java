@@ -1,4 +1,4 @@
-package dl;
+package dao;
 
 import model.Customer;
 import model.Product;

@@ -1,8 +1,8 @@
-package dl;
+package dao;
 
-import dl.storage.StoreData;
-import bl.exceptions.CustomerNotFoundException;
-import bl.exceptions.ProductNotFoundException;
+import dao.storage.StoreData;
+import services.exceptions.CustomerNotFoundException;
+import services.exceptions.ProductNotFoundException;
 import model.*;
 
 public class StoreDAO implements DAO {
