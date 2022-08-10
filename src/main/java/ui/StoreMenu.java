@@ -1,5 +1,6 @@
 package ui;
 
+import dao.storage.PostgresqlDAO;
 import services.Client;
 import dao.DAO;
 import dao.StoreDAO;
@@ -26,7 +27,7 @@ public class StoreMenu {
     public void run() {
 
         String userInput = "";
-        DAO dao = new StoreDAO();
+        DAO dao = new PostgresqlDAO();
 
         // Interactive menu
         do {
@@ -83,13 +84,14 @@ public class StoreMenu {
             }
             System.out.println("Enter next command: ");
             userInput = in.nextLine();
-        } while (!userInput.equals("x"));
+        } while (!userInput.toLowerCase().equals("x"));
         in.close();
     }
 
 
     void displayOptions() {
-        System.out.println("[h] See this menu again\n" +
+        System.out.println("Currently in store: " + store.getName() + "\n" +
+                "[h] See this menu again\n" +
                 "[1] Add a customer\n" +
                 "[2] Search for a customer\n" +
                 "[3] Add a product\n" +
@@ -99,6 +101,4 @@ public class StoreMenu {
                 "[7] Replenish inventory\n" +
                 "[x] Exit");
     }
-
-
 }

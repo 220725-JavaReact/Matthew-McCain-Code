@@ -5,6 +5,8 @@ import services.exceptions.CustomerNotFoundException;
 import services.exceptions.ProductNotFoundException;
 import model.*;
 
+import java.util.ArrayList;
+
 public class StoreDAO implements DAO {
 
     public void addCustomer(Customer customer) {
@@ -35,5 +37,10 @@ public class StoreDAO implements DAO {
 
     public void addStoreFront(StoreFront store) {
         StoreData.storeFronts.add(store);
+    }
+
+    @Override
+    public ArrayList<StoreFront> getStores() {
+        return new ArrayList<StoreFront>();
     }
 }

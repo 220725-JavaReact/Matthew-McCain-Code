@@ -27,6 +27,8 @@ public class Driver {
             SystemMenu systemMenu = new SystemMenu(client, in);
             systemMenu.run();
             Logger.getLogger().log(info, "Program ended");
+        } catch(IllegalStateException e) {
+            Logger.getLogger().log(error, e);
         } catch (Exception e) {
             Logger.getLogger().log(fatal, e);
         }

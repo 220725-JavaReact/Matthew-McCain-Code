@@ -2,17 +2,19 @@ package services;
 
 import dao.DAO;
 import dao.StoreDAO;
+import dao.storage.PostgresqlDAO;
 import dao.storage.StoreData;
 import model.*;
 import services.util.Logger;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import static services.util.Logger.LogLevel.*;
 
 public class Client {
 
-DAO dao = new StoreDAO();
+DAO dao = new PostgresqlDAO();
 
     public void addStore(Scanner in) {
         System.out.println("Store Name:");
@@ -27,15 +29,16 @@ DAO dao = new StoreDAO();
     public StoreFront getStore(Scanner in) {
         StoreFront store = new StoreFront();
         int response = -1;
+        ArrayList<StoreFront> storeFronts = dao.getStores();
         while (response == -1) {
-            for (int i = 0; i < StoreData.storeFronts.size(); i++) {
-                System.out.println("[" + i + 1 + "] " + StoreData.storeFronts.get(i).getName());
+            for (int i = 0; i < storeFronts.size(); i++) {
+                System.out.println("[" + i + 1 + "] " + storeFronts.get(i).getName());
             }
             System.out.println("Which Store Front would you like to choose?");
             response = in.nextInt();
             in.nextLine();
-            if (response > 0 && response <= StoreData.storeFronts.size()) {
-                store = StoreData.storeFronts.get(response - 1);
+            if (response > 0 && response <= storeFronts.size()) {
+                store = storeFronts.get(response - 1);
                 Logger.getLogger().log(info, store.getName() + " was found.");
             } else {
                 response = -1;
@@ -43,17 +46,56 @@ DAO dao = new StoreDAO();
         }
         return store;
     }
+
+    public ArrayList<StoreFront> getStores() {
+        return dao.getStores();
+    }
+
     public Product captureProduct (Scanner in){
         System.out.println("Product Name:");
         String name = in.nextLine();
+        CATEGORIES category = getCategory(in);
+        System.out.println("");
         System.out.println("Product Price");
         double price = in.nextDouble();
         in.nextLine();
         System.out.println("Product Description:");
         String description = in.nextLine();
-        Product product = new Product(name, price, description);
+        Product product = new Product(name, category, price, description);
         Logger.getLogger().log(info, "Product: " + product.getName() + " was added.");
         return product;
+    }
+
+    private CATEGORIES getCategory(Scanner in) {
+        while (true) {
+            System.out.println("Choose a category:\n" +
+                    "[1] Automotive\n" +
+                    "[2] Food\n" +
+                    "[3] Cleaner\n" +
+                    "[4] Hardware\n" +
+                    "[5] Office\n" +
+                    "[6] personal\n" +
+                    "[7] deli");
+            String response = in.nextLine();
+            switch (response.toLowerCase()) {
+                case "1" :
+                    return CATEGORIES.automotive;
+                case "2" :
+                    return CATEGORIES.food;
+                case "3" :
+                    return CATEGORIES.cleaner;
+                case "4" :
+                    return CATEGORIES.hardware;
+                case "5" :
+                    return CATEGORIES.office;
+                case "6" :
+                    return CATEGORIES.personal;
+                case "7" :
+                    return CATEGORIES.deli;
+                default:
+                    System.out.println("Not a valid option");
+            }
+        }
     }
 
     public Order createOrder (Scanner in, DAO dao){
@@ -149,5 +191,10 @@ DAO dao = new StoreDAO();
 //        }
         System.out.println("Enter phone number:");
         return in.nextLine();
+    }
+
+    public void replenishInventory(Scanner in) {
+        // choose product
+        // adjust quantity
     }
 }

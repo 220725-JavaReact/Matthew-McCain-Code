@@ -22,7 +22,7 @@ public class SystemMenu {
         do {
             switch (userInput) {
                 case "1":
-                    if (StoreData.storeFronts.size() == 0) {
+                    if (client.getStores().size() == 0) {
                         System.out.println("No Store Fronts available, please add a store.");
                         break;
                     }
@@ -40,12 +40,9 @@ public class SystemMenu {
                 default:
                     displayOptions();
             }
-            if (store != null) {
-                System.out.println("Currently in : " + store.getName());
-            }
             System.out.println("Enter Command:");
             userInput = in.nextLine();
-        } while(!(userInput.equals("x")));
+        } while(!(userInput.toLowerCase().equals("x")));
     }
 
     private void displayOptions() {
@@ -54,9 +51,5 @@ public class SystemMenu {
                 "[1] Choose a Store Front\n" +
                 "[2] Add a Store Front\n" +
                 "[x] Exit");
-    }
-
-    public StoreFront getStore() {
-        return store;
     }
 }

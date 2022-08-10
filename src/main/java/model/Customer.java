@@ -13,6 +13,18 @@ public class Customer {
 		this.phone = phone;
 	}
 
+	public Address getAddress() {
+		return address;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
 	public String getName() {
 		return name;
 	}
