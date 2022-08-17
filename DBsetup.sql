@@ -2,7 +2,7 @@ create table categories (
 	category varchar(255) primary key
 );
 
-create table Products (
+create table products (
 	id serial primary key,
 	name varchar(255),
 	price decimal,
@@ -20,7 +20,7 @@ create table addresses (
 	street varchar(255),
 	city varchar(255),
 	state varchar(2) references states (state),
-	zip smallint
+	zip int
 );
 
 create table customers (

@@ -1,10 +1,8 @@
 package ui;
 
-import dao.storage.PostgresqlDAO;
+import dao.PostgresqlDAO;
 import services.Client;
 import dao.DAO;
-import dao.StoreDAO;
-import dao.storage.StoreData;
 import model.*;
 import services.util.Logger;
 
@@ -28,6 +26,7 @@ public class StoreMenu {
 
         String userInput = "";
         DAO dao = new PostgresqlDAO();
+        int storeID = dao.getStoreID(store);
 
         // Interactive menu
         do {
@@ -52,28 +51,24 @@ public class StoreMenu {
                     }
                     break;
                 case "3":
-                    // add a product to inventory
+                    // add a product to catalog
                     dao.addProduct(client.captureProduct(in));
                     break;
                 case "4":
                     // View store inventory
-                    for(Product product : StoreData.products) {
-                        System.out.println(product);
-                    }
+                    client.displayInventory(store);
                     break;
                 case "5":
                     // Place an order
-                    StoreData.orders.add(client.createOrder(in, dao));
+                    client.placeOrder(in, storeID);
                     break;
                 case "6":
                     // View order history
-                    for(Order order : StoreData.orders) {
-                        System.out.println(order);
-                    }
+                    client.displayOrders(storeID);
                     break;
                 case "7":
                     // Replenish inventory
-
+                    client.replenish(in, store);
                     break;
                 case "x":
                     System.out.println("Going back to main menu.");

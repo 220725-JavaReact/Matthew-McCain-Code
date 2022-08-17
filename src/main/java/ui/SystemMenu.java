@@ -47,7 +47,7 @@ public class SystemMenu {
 
     private void displayOptions() {
         System.out.println("Available Options:\n" +
-                "[h[ Display Options\n" +
+                "[h] Display Options\n" +
                 "[1] Choose a Store Front\n" +
                 "[2] Add a Store Front\n" +
                 "[x] Exit");

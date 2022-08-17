@@ -1,13 +1,12 @@
 package services;
 
 import dao.DAO;
-import dao.StoreDAO;
-import dao.storage.PostgresqlDAO;
-import dao.storage.StoreData;
+import dao.PostgresqlDAO;
 import model.*;
 import services.util.Logger;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import static services.util.Logger.LogLevel.*;
@@ -32,7 +31,7 @@ DAO dao = new PostgresqlDAO();
         ArrayList<StoreFront> storeFronts = dao.getStores();
         while (response == -1) {
             for (int i = 0; i < storeFronts.size(); i++) {
-                System.out.println("[" + i + 1 + "] " + storeFronts.get(i).getName());
+                System.out.println("[" + (i + 1) + "] " + storeFronts.get(i).getName());
             }
             System.out.println("Which Store Front would you like to choose?");
             response = in.nextInt();
@@ -45,6 +44,53 @@ DAO dao = new PostgresqlDAO();
             }
         }
         return store;
+    }
+
+    public void placeOrder(Scanner in, int storeID) {
+        // create order id w/ store_id and customer_id
+        System.out.println("Enter a name to search for:");
+        String searchString = in.nextLine();
+        boolean customerFound = false;
+        Customer customer = null;
+        while (!customerFound) {
+            try {
+                customer = dao.findCustomer(searchString);
+                customerFound = true;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        int customerID = dao.getCustomerID(customer);
+        int orderID = dao.createOrder(storeID, customerID);
+        // create line_item w/ order_id, product_id, & quantity
+        ArrayList<Product> order = new ArrayList<>();
+        boolean finished = false;
+        while (!finished) {
+            CATEGORIES category = getCategory(in);
+            ArrayList<Product> products = dao.getProducts(category);
+            System.out.println("Choose a product:");
+            for (int i = 0; i < products.size(); i++) {
+                System.out.println("[" + (i + 1) + "] " + products.get(i).getName());
+            }
+            int choice = in.nextInt();
+            in.nextLine();
+            order.add(products.get(choice - 1));
+            System.out.println("How many " + products.get(choice - 1).getName() + " would you like to purchase?");
+            int quantity = in.nextInt();
+            in.nextLine();
+            dao.addLineItem(orderID, products.get(choice - 1), quantity);
+            System.out.println("Would you like to add another product? [y/n]");
+            String shouldContinue = in.nextLine();
+            if (shouldContinue.equalsIgnoreCase("n")) {
+                finished = true;
+            }
+        }
+        // update order_id w/ total
+        double total = 0;
+        for (Product product : order) {
+            total += product.getPrice();
+        }
+        dao.updateOrder(orderID, total);
     }
 
     public ArrayList<StoreFront> getStores() {
@@ -98,30 +144,51 @@ DAO dao = new PostgresqlDAO();
         }
     }
 
-    public Order createOrder (Scanner in, DAO dao){
-        Order order = new Order();
-        String input;
-        do {
-            addLineItem(in, order, dao);
-            System.out.println("Add another item [y/n]:");
-            input = in.nextLine();
-        } while (input.toLowerCase().equals("y"));
-        Logger.getLogger().log(info, "Placed Order:\n" + order);
-        return order;
-    }
-    public void addLineItem (Scanner in, Order order, DAO dao){
-        try {
-            System.out.println("Name of Product to add to order:");
-            Product product = dao.findProduct(in.nextLine());
-            System.out.println("Quantity of " + product.getName() + " to add to order:");
-            int quantity = in.nextInt();
-            in.nextLine();
-            LineItem item = new LineItem(product, quantity);
-            order.addProduct(item);
-        } catch (Exception e) {
-            Logger.getLogger().log(error, e);
+    public static CATEGORIES getCategory(String category) {
+        switch (category) {
+            case "automotive" :
+                return CATEGORIES.automotive;
+            case "food" :
+                return CATEGORIES.food;
+            case "cleaner" :
+                return CATEGORIES.cleaner;
+            case "hardware" :
+                return CATEGORIES.hardware;
+            case "office" :
+                return CATEGORIES.office;
+            case "personal" :
+                return CATEGORIES.personal;
+            case "deli" :
+                return CATEGORIES.deli;
+            default:
+                return null;
         }
     }
+
+    public void replenish(Scanner in, StoreFront store) {
+        CATEGORIES category = getCategory(in);
+        ArrayList<Product> products = dao.getProducts(category);
+        System.out.println("Choose a Product:");
+        for (int i = 0; i < products.size() ; i++){
+            System.out.println("[" + (i + 1) + "] " + products.get(i).getName());
+        }
+        int choice = in.nextInt();
+        in.nextLine();
+        Product product = products.get(choice - 1);
+        System.out.println("Enter quantity adjustment:");
+        int quantity = in.nextInt();
+        in.nextLine();
+        dao.adjustInventory(store, product, quantity);
+    }
+
+    public void displayInventory(StoreFront store) {
+        ArrayList<ArrayList<String>> inventory = dao.getInventory(store);
+        System.out.printf("%-20s%-20s%s%n", "[Category]", "[Product Name]", "[Quantity]");
+        for (ArrayList<String> row : inventory) {
+            System.out.printf("%-20s%-20s%s%n", row.get(0), row.get(1), row.get(2));
+        }
+    }
+
     public Customer captureCustomer (Scanner in){
         System.out.println("Full Name: ");
         String name = in.nextLine();
@@ -193,8 +260,11 @@ DAO dao = new PostgresqlDAO();
         return in.nextLine();
     }
 
-    public void replenishInventory(Scanner in) {
-        // choose product
-        // adjust quantity
+    public void displayOrders(int storeID) {
+        ArrayList<ArrayList<String>> orderList = dao.getOrders();
+        System.out.printf("%-15s%s%n", "[Customer]", "[Total]");
+        for (ArrayList<String> row : orderList) {
+            System.out.printf("%-15s%-5s%n");
+        }
     }
 }

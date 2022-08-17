@@ -39,6 +39,9 @@ public class StoreFront {
 	public HashMap<Product, Integer> getInventory() {
 		return inventory;
 	}
+	public void addInventory(Product product, int quantity) {
+
+	}
 
 	public ArrayList<Order> getOrders() {
 		return orders;
